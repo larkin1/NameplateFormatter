@@ -1,53 +1,56 @@
 import streamlit as st
-from openai import OpenAI
+import pandas as pd
 
 # Show title and description.
-st.title("📄 Document question answering")
-st.write(
-    "Upload a document below and ask a question about it – GPT will answer! "
-    "To use this app, you need to provide an OpenAI API key, which you can get [here](https://platform.openai.com/account/api-keys). "
-)
+st.title("Nameplate Formatter")
 
-# Ask user for their OpenAI API key via `st.text_input`.
-# Alternatively, you can store the API key in `./.streamlit/secrets.toml` and access it
-# via `st.secrets`, see https://docs.streamlit.io/develop/concepts/connections/secrets-management
-openai_api_key = st.text_input("OpenAI API Key", type="password")
-if not openai_api_key:
-    st.info("Please add your OpenAI API key to continue.", icon="🗝️")
-else:
+def reset_file():
+    if "file" in st.session_state:
+        del st.session_state["file"]
+    st.rerun()
 
-    # Create an OpenAI client.
-    client = OpenAI(api_key=openai_api_key)
+if "file" not in st.session_state:
+    st.write("Please upload an Excel sheet below for the app to process. ")
+    
+    uploaded_file = st.file_uploader("Upload a document (xlsx or csv)", type=("xlsx", "csv"))
+    
+    if uploaded_file is not None:
+        st.session_state.file = uploaded_file
+        st.rerun()
+    
+else: 
+    st.success("File Uploaded!")
+    if st.button("Remove File"):
+        reset_file()
+    else:
+        uploaded_file = st.session_state.file
 
-    # Let the user upload a file via `st.file_uploader`.
-    uploaded_file = st.file_uploader(
-        "Upload a document (.txt or .md)", type=("txt", "md")
-    )
+        if uploaded_file.name.endswith('.csv'):
+            df = pd.read_csv(uploaded_file)
+        else:
+            df = pd.read_excel(uploaded_file)
 
-    # Ask the user for a question via `st.text_area`.
-    question = st.text_area(
-        "Now ask a question about the document!",
-        placeholder="Can you give me a short summary?",
-        disabled=not uploaded_file,
-    )
+        st.write("Select the below Checkboxes to extract.")
 
-    if uploaded_file and question:
+        selected_cols = [col for col in df.columns if st.checkbox(col)]
 
-        # Process the uploaded file and question.
-        document = uploaded_file.read().decode()
-        messages = [
-            {
-                "role": "user",
-                "content": f"Here's a document: {document} \n\n---\n\n {question}",
-            }
-        ]
+        if selected_cols:
+            st.write("**Formatted Output**")
+            for _, row in df[selected_cols].iterrows():
+                for col in selected_cols:
+                    st.write(f"{col}: {row[col]}")
+                st.write("------")
 
-        # Generate an answer using the OpenAI API.
-        stream = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            stream=True,
-        )
 
-        # Stream the response to the app using `st.write_stream`.
-        st.write_stream(stream)
+        # if selected_cols:
+        #     st.write("**Formatted Output**")
+        #     group_col = selected_cols[0]
+
+        #     for group_value, group_df in df.groupby(group_col):
+        #         st.write(f"**{group_value}**")
+        #         for _, row in group_df.iterrows():
+        #             for col in selected_cols[1:]:
+        #                 st.write(f"{col}: {row[col]}")
+        #             st.write("------")
+            
+
