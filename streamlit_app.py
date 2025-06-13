@@ -9,21 +9,26 @@ def reset_file():
         del st.session_state["file"]
     st.rerun()
 
-if "file_bytes" not in st.session_state:
-    uploaded_file = st.file_uploader("Upload file")
+if "file" not in st.session_state:
+    st.write("Please upload an Excel sheet below for the app to process. ")
+    
+    uploaded_file = st.file_uploader("Upload a document (xlsx or csv)", type=("xlsx", "csv"))
+    
     if uploaded_file is not None:
-        st.session_state.file_bytes = uploaded_file.getvalue()
-        st.session_state.file_name = uploaded_file.name
+        st.session_state.file = uploaded_file
         st.rerun()
-else:
-    file_bytes = st.session_state.file_bytes
-    file_name = st.session_state.file_name
-    # Use BytesIO to load into pandas
-    import io
-    if file_name.endswith(".csv"):
-        df = pd.read_csv(io.StringIO(file_bytes.decode()))
+    
+else: 
+    st.success("File Uploaded!")
+    if st.button("Remove File"):
+        reset_file()
     else:
-        df = pd.read_excel(io.BytesIO(file_bytes))
+        uploaded_file = st.session_state.file
+
+        if uploaded_file.name.endswith('.csv'):
+            df = pd.read_csv(uploaded_file)
+        else:
+            df = pd.read_excel(uploaded_file)
 
         st.write("Select the below Checkboxes to extract.")
 
