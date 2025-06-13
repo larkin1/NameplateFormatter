@@ -1,8 +1,8 @@
-# 📄 Document question answering template
+# Nameplates
 
-A simple Streamlit app that answers questions about an uploaded document via OpenAI's GPT-3.5.
+A simple Streamlit app that pulls columns from an uploaded spreadsheet and formats them into nameplate formats.
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://document-question-answering-template.streamlit.app/)
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://nameplates.streamlit.app/)
 
 ### How to run it on your own machine
 

@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 
+st.set_page_config('Nameplates', "Logo.png")
+
 # Show title and description.
 st.title("Nameplate Formatter")
 
