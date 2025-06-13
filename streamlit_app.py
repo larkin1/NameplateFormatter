@@ -26,9 +26,9 @@ else:
         uploaded_file = st.session_state.file
 
         if uploaded_file.name.endswith('.csv'):
-            df = pd.read_csv(uploaded_file)
+            df = pd.read_csv(uploaded_file, dtype=str)
         else:
-            df = pd.read_excel(uploaded_file)
+            df = pd.read_excel(uploaded_file, dtype=str)
 
         st.write("Select the below Checkboxes to extract.")
 
