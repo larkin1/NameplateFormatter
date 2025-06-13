@@ -3,7 +3,6 @@ import pandas as pd
 
 st.set_page_config('Nameplates', "Logo.png")
 
-# Show title and description.
 st.title("Nameplate Formatter")
 
 def reset_file():
@@ -42,17 +41,3 @@ else:
                 for col in selected_cols:
                     st.write(f"{col}: {row[col]}")
                 st.write("------")
-
-
-        # if selected_cols:
-        #     st.write("**Formatted Output**")
-        #     group_col = selected_cols[0]
-
-        #     for group_value, group_df in df.groupby(group_col):
-        #         st.write(f"**{group_value}**")
-        #         for _, row in group_df.iterrows():
-        #             for col in selected_cols[1:]:
-        #                 st.write(f"{col}: {row[col]}")
-        #             st.write("------")
-            
-
